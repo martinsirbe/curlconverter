@@ -1,0 +1,19 @@
+name: Publish docker image to GitHub packages
+on:
+  push:
+    branches: ['master']
+  schedule:
+    - cron:  '0 8 * * MON'
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Build docker image.
+        run: make docker-image
+      - name: Docker authenticate.
+        run: docker login docker.pkg.github.com -u martinsirbe -p ${{ secrets.GITHUB_TOKEN }}
+      - name: Docker publish.
+        run: make publish-docker-image
